@@ -1,7 +1,5 @@
 
 exports.up = function (knex, Promise) {
-  let date = (new Date(Date.now())).toDateString();
-  console.log(date);
   return knex.schema.createTable('articles', (articlesTable) => {
     articlesTable.increments('article_id');
     articlesTable.string('title').notNullable();
@@ -11,7 +9,7 @@ exports.up = function (knex, Promise) {
     articlesTable.foreign('topic').references('slug').on('topics');
     articlesTable.string('author');
     articlesTable.foreign('author').references('username').on('users');
-    articlesTable.date('created_at').defaultsTo(date);
+    articlesTable.date('created_at').defaultsTo(knex.fn.now());
   });
 };
 
