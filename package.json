@@ -8,7 +8,8 @@
     "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
-    "setup-dbs": "psql -f ./db/setup.sql"
+    "setup-dbs": "psql -f ./db/setup.sql",
+    "make-migration": "knex migrate:make"
   },
   "repository": {
     "type": "git",
