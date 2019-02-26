@@ -76,8 +76,81 @@ describe('renameKey()', () => {
   });
 });
 
-// describe('createRef()', () => {
-//   it('creates a reference object for one entry', () => {
-//     const input = createRef([])
-//   });
-// });
+describe('createRef()', () => {
+  it('creates a reference object for one entry', () => {
+    const input = createRef([{
+      article_id: 36,
+      title: 'The vegan carnivore?',
+    }], 'title', 'article_id');
+    const expected = { 'The vegan carnivore?': 36 };
+    expect(input).to.eql(expected);
+  });
+  it('creates a reference object for multiple entries', () => {
+    const input = createRef([{
+      article_id: 36,
+      title: 'The vegan carnivore?',
+    },
+    {
+      article_id: 35,
+      title: 'Stone Soup',
+    }], 'title', 'article_id');
+    const expected = { 'The vegan carnivore?': 36, 'Stone Soup': 35 };
+    expect(input).to.eql(expected);
+  });
+});
+
+describe('formatData()', () => {
+  it('swaps key with its reference for array with single object', () => {
+    const input = formatData([{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      votes: 3,
+      created_at: 1504946266488,
+      author: 'weegembump',
+    }], 'belongs_to', 'article_id', { 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29 });
+    const expected = [{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      article_id: 29,
+      votes: 3,
+      created_at: 1504946266488,
+      author: 'weegembump',
+    }];
+    expect(input).to.eql(expected);
+  });
+  it('swaps keys with their references for array with multiple objects', () => {
+    const input = formatData([{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      votes: 3,
+      created_at: 1504946266488,
+      author: 'weegembump',
+    },
+    {
+      body:
+        'Enim sunt nam rerum quidem. Quod quia aliquam numquam et laboriosam doloribus iusto et. Numquam quae quis hic maiores. Sed quos et dolore esse cumque consequatur blanditiis placeat omnis. Omnis qui magni explicabo.',
+      belongs_to: 'Stone Soup',
+      votes: 19,
+      created_at: 1515386864038,
+      author: 'weegembump',
+    }], 'belongs_to', 'article_id', { 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29, 'Stone Soup': 35 });
+    const expected = [{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      article_id: 29,
+      votes: 3,
+      created_at: 1504946266488,
+      author: 'weegembump',
+    },
+    {
+      body:
+        'Enim sunt nam rerum quidem. Quod quia aliquam numquam et laboriosam doloribus iusto et. Numquam quae quis hic maiores. Sed quos et dolore esse cumque consequatur blanditiis placeat omnis. Omnis qui magni explicabo.',
+      article_id: 35,
+      votes: 19,
+      created_at: 1515386864038,
+      author: 'weegembump',
+    }];
+  });
+});
