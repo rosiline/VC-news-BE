@@ -37,6 +37,19 @@ describe('formatDate()', () => {
     expect(input[0].created_at).to.be.a('date');
     expect(input[1].created_at).to.be.a('date');
   });
+  it('does not mutate the original array or objects', () => {
+    const array = [{
+      title: 'Running a Node App',
+      topic: 'coding',
+      author: 'jessjelly',
+      body:
+        'This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.',
+      created_at: 1471522072389,
+    }];
+    const input = formatDate(array);
+    expect(input).to.not.equal(array);
+    expect(input[0]).to.not.equal(array[0]);
+  });
 });
 
 describe('renameKey()', () => {
@@ -78,6 +91,26 @@ describe('renameKey()', () => {
     }], 'created_by', 'author');
     expect(input[0]).to.have.keys('body', 'belongs_to', 'author', 'votes', 'created_at');
     expect(input[1]).to.have.keys('body', 'belongs_to', 'author', 'votes', 'created_at');
+  });
+  it('does not mutate the original array or objects', () => {
+    const array = [{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488,
+    }];
+    const input = renameKey([{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488,
+    }], 'created_by', 'author');
+    expect(input).to.not.equal(array);
+    expect(input[0]).to.not.equal(array[0]);
   });
 });
 
@@ -158,5 +191,18 @@ describe('formatData()', () => {
       author: 'weegembump',
     }];
     expect(input).to.eql(expected);
+  });
+  it('does not mutate the original array or objects', () => {
+    const array = [{
+      body:
+        'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      votes: 3,
+      created_at: 1504946266488,
+      author: 'weegembump',
+    }];
+    const input = formatData(array, 'belongs_to', 'article_id', { 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29 });
+    expect(input).to.not.equal(array);
+    expect(input[0]).to.not.equal(array[0]);
   });
 });

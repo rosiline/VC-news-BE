@@ -1,18 +1,18 @@
 exports.formatDate = (array) => {
-  const newArray = [...array];
-  newArray.forEach((entry) => {
-    entry.created_at = new Date(entry.created_at);
+  return array.map((originalElement) => {
+    const element = { ...originalElement };
+    element.created_at = new Date(element.created_at);
+    return element;
   });
-  return newArray;
 };
 
 exports.renameKey = (array, oldName, newName) => {
-  const newArray = [...array];
-  newArray.forEach((element) => {
+  return array.map((originalElement) => {
+    const element = { ...originalElement };
     element[newName] = element[oldName];
     delete element[oldName];
+    return element;
   });
-  return newArray;
 };
 
 exports.createRef = (array, key_to_replace, new_key) => {
@@ -24,10 +24,10 @@ exports.createRef = (array, key_to_replace, new_key) => {
 };
 
 exports.formatData = (array, key_to_delete, new_key, refObj) => {
-  const newArray = [...array];
-  newArray.forEach((element, index) => {
-    element[new_key] = refObj[newArray[index][key_to_delete]];
+  return array.map((originalElement, index) => {
+    const element = { ...originalElement };
+    element[new_key] = refObj[array[index][key_to_delete]];
     delete element[key_to_delete];
+    return element;
   });
-  return newArray;
 };

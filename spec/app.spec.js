@@ -25,13 +25,25 @@ describe('/api', () => {
         expect(res.body.topic).to.contain.keys('slug', 'description');
       });
     });
-    xit('responds with 400 when a bad POST request is made (slug must be unique)', () => {
-      const newTopic = { slug: 'coding', description: 'Code is love, code is life' };
+    it('responds with 400 when a bad POST request is made (slug must be unique)', () => {
+      const newTopic = { slug: 'cats', description: 'Not dogs' };
       return request.post('/api/topics').send(newTopic).expect(400);
     });
     it('responds with 400 for a bad POST request (invalid body)', () => {
       const newTopic = { topic: 'Travel' };
       return request.post('/api/topics').send(newTopic).expect(400);
+    });
+  });
+  describe('/articles', () => {
+    it('GET 200 responds with an array of article objects with keys author, title, article_id, topic, created_at, votes and comment_count', () => request.get('/api/articles').expect(200).then((res) => {
+      expect(res.body.articles).to.be.an('array');
+      expect(res.body.articles[0]).to.be.an('object');
+      expect(res.body.articles[0]).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes');
+    }));
+    it('should have a comment count parameter which is the total count of all the comments with this article_id', () => {
+      return request.get('/api/articles').expect(200).then((res) => {
+        expect(res.body.articles[0].to.contain.keys('comment_count'));
+      })
     });
   });
 });
