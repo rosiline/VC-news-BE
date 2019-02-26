@@ -1,14 +1,20 @@
-const { formatDate, renameKey, createRef, formatData } = require('../utils/index');
-const { articleData, topicData, userData, commentData } = require('../data/index');
+const {
+  formatDate,
+  renameKey,
+  createRef,
+  formatData,
+} = require('../utils/index');
+const {
+  articleData,
+  topicData,
+  userData,
+  commentData,
+} = require('../data/index');
 
 exports.seed = (knex, Promise) => {
   return knex.migrate.rollback().then(() => knex.migrate.latest())
-    .then(() => {
-      return knex.insert(topicData).into('topics');
-    })
-    .then(() => {
-      return knex.insert(userData).into('users');
-    })
+    .then(() => knex.insert(topicData).into('topics'))
+    .then(() => knex.insert(userData).into('users'))
     .then(() => {
       const formattedArticleData = formatDate(articleData);
       return knex.insert(formattedArticleData).into('articles').returning('*');

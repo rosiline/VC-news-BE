@@ -1,5 +1,10 @@
 const { expect } = require('chai');
-const { formatDate, renameKey, createRef, formatData } = require('./index');
+const {
+  formatDate,
+  renameKey,
+  createRef,
+  formatData,
+} = require('./index');
 
 describe('formatDate()', () => {
   it('formats timestamp as a date object for array with single entry', () => {
