@@ -4,7 +4,7 @@
   "description": "## Northcoders News API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./spec/app.spec.js",
     "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
@@ -13,7 +13,8 @@
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
-    "test-utils": "mocha ./db/utils/index.spec.js"
+    "test-utils": "mocha ./db/utils/index.spec.js",
+    "dev": "nodemon listen.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "eslint-plugin-import": "^2.14.0",
     "husky": "^1.1.4",
     "mocha": "^6.0.2",
+    "nodemon": "^1.18.10",
     "supertest": "^3.4.2"
   }
 }

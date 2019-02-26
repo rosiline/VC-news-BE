@@ -157,5 +157,6 @@ describe('formatData()', () => {
       created_at: 1515386864038,
       author: 'weegembump',
     }];
+    expect(input).to.eql(expected);
   });
 });
