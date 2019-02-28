@@ -1,4 +1,5 @@
 const connection = require('../db/connection');
+const { renameKey } = require('../db/utils/index');
 
 exports.getArticles = ({
   author, topic, sort_by = 'created_at', order = 'desc',
@@ -14,4 +15,9 @@ exports.getArticles = ({
   if (author) queries['articles.author'] = author;
   if (topic) queries.topic = topic;
   return articles.where(queries);
+};
+
+exports.insertArticle = (newArticle) => {
+  const [formattedArticle] = renameKey([newArticle], 'username', 'author');
+  return connection('articles').insert(formattedArticle).returning('*');
 };
