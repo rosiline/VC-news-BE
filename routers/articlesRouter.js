@@ -1,5 +1,11 @@
 const articlesRouter = require('express').Router();
-const { sendArticles, postArticle, sendArticle } = require('../controllers/articles');
+const {
+  sendArticles,
+  postArticle,
+  sendArticle,
+  updateArticle,
+  deleteArticle,
+} = require('../controllers/articles');
 const { handle405 } = require('../errors/index');
 
 articlesRouter.route('/')
@@ -8,6 +14,8 @@ articlesRouter.route('/')
   .all(handle405);
 
 articlesRouter.route('/:article_id')
-  .get(sendArticle);
+  .get(sendArticle)
+  .patch(updateArticle)
+  .delete(deleteArticle);
 
 module.exports = articlesRouter;

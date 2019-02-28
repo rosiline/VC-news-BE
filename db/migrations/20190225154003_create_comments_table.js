@@ -5,7 +5,7 @@ exports.up = function (knex, Promise) {
     commentsTable.string('author');
     commentsTable.foreign('author').references('username').on('users');
     commentsTable.integer('article_id');
-    commentsTable.foreign('article_id').references('article_id').on('articles');
+    commentsTable.foreign('article_id').references('article_id').on('articles').onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo(0);
     commentsTable.date('created_at').defaultsTo(knex.fn.now());
     commentsTable.string('body', 1000).notNullable();

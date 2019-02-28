@@ -24,14 +24,14 @@ exports.insertArticle = (newArticle) => {
     .returning('*');
 };
 
-exports.getArticle = (article_id) => {
-  const article = connection
-    .select('articles.*')
-    .count({ comment_count: 'comment_id' })
-    .from('articles')
-    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
-    .groupBy('articles.article_id');
-  const conditions = {};
-  conditions['articles.article_id'] = article_id;
-  return article.where(conditions);
-};
+exports.getArticle = article_id => connection
+  .select('articles.*')
+  .count({ comment_count: 'comment_id' })
+  .from('articles')
+  .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+  .groupBy('articles.article_id')
+  .where({ 'articles.article_id': article_id });
+
+exports.updateVote = (article_id, inc_votes) => connection('articles').where({ article_id }).increment('votes', inc_votes).returning('*');
+
+exports.delArticle = article_id => connection('articles').where({ article_id }).del();

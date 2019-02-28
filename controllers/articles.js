@@ -1,5 +1,11 @@
 const { getTopics } = require('../models/topics');
-const { getArticles, insertArticle, getArticle } = require('../models/articles');
+const {
+  getArticles,
+  insertArticle,
+  getArticle,
+  updateVote,
+  delArticle,
+} = require('../models/articles');
 
 // add get users to promise
 exports.sendArticles = (req, res, next) => {
@@ -31,7 +37,31 @@ exports.sendArticle = (req, res, next) => {
   getArticle(article_id)
     .then(([article]) => {
       if (article === undefined) next({ status: 404 });
-      else res.status(200).send({ article });
+      else {
+        console.log(article);
+        res.status(200).send({ article });
+      }
+    })
+    .catch(next);
+};
+
+exports.updateArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  updateVote(article_id, inc_votes)
+    .then(() => getArticle(article_id))
+    .then(([article]) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  delArticle(article_id)
+    .then((output) => {
+      if (output === 1) res.status(204).send();
+      else next({ status: 422 });
     })
     .catch(next);
 };

@@ -121,11 +121,28 @@ describe('/api', () => {
       };
       return request.post('/api/articles').send(newArticle).expect(422);
     });
-    it('GET /api/articles/:article_id 200 responds with an article object with properties author, title, article_id, body, topic, created_at, votes, comment_count', () => request.get('/api/articles/1').expect(200).then((res) => {
+    it('GET /api/articles/:article_id status 200 responds with an article object with properties author, title, article_id, body, topic, created_at, votes, comment_count', () => request.get('/api/articles/1').expect(200).then((res) => {
       expect(res.body.article).to.be.an('object');
       expect(res.body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
     }));
     it('GET /api/articles/:article_id responds with status 400 for invalid input for article_id', () => request.get('/api/articles/cat').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
     it('GET /api/articles/:article_id responds with status 404 for a valid input for article_id where article does not exist in the database', () => request.get('/api/articles/100').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
+    it('PATCH /api/articles/:article_id status 200 increases votes and returns the updated article', () => {
+      const votes = { inc_votes: 1 };
+      return request.patch('/api/articles/1').send(votes).expect(200).then((res) => {
+        expect(res.body.article.votes).to.equal(101);
+        expect(res.body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
+      });
+    });
+    it('PATCH /api/articles/:article_id status 200 decreases votes and returns the updated article', () => {
+      const votes = { inc_votes: -1 };
+      return request.patch('/api/articles/1').send(votes).expect(200).then((res) => {
+        expect(res.body.article.votes).to.equal(99);
+        expect(res.body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
+      });
+    });
+    it('DELETE status 204 deletes the given article by article_id', () => request.delete('/api/articles/1').expect(204));
+    it('DELETE returns 422 when trying to delete an article that does not exist in the database', () => request.delete('/api/articles/100').expect(422).then(res => expect(res.body.msg).to.equal('Unable to process request')));
+    it('DELETE returns 400 when article_id is not valid (not a number)', () => request.delete('/api/articles/article1').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
   });
 });
