@@ -1,17 +1,22 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/apiRouter');
+const {
+  handleInvalidPath,
+  handle400,
+  handle404,
+  handle422,
+  handle500,
+} = require('./errors/index');
 
 app.use(bodyParser.json());
 app.use('/api', apiRouter);
 
-app.use('/*', (req, res, next) => {
-  res.status(404).send({ msg: 'Invalid url' });
-});
+app.use('/*', handleInvalidPath);
 
-app.use((err, req, res, next) => {
-  if (err.status === 400) res.status(400).send({ msg: 'Bad request' });
-  else console.log(err);
-});
+app.use(handle400);
+app.use(handle404);
+app.use(handle422);
+app.use(handle500);
 
 module.exports = app;

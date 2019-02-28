@@ -13,7 +13,5 @@ exports.postTopic = (req, res, next) => {
   addTopic(newTopic)
     .then(([topic]) => {
       res.status(201).send({ topic });
-    }).catch((err) => {
-      next({ err, status: 400 });
-    });
+    }).catch(next);
 };
