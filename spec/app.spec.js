@@ -169,8 +169,12 @@ describe('/api', () => {
       expect(res.body.comments[1].created_at).to.equal('2015-11-23T00:00:00.000Z');
       expect(res.body.comments[2].created_at).to.equal('2014-11-23T00:00:00.000Z');
     }));
-    // it('POST /api/articles/:article_id/comments status 201 responds with the posted comment object', () => {
-
-    // });
+    it('POST /api/articles/:article_id/comments status 201 responds with the posted comment object', () => {
+      const newComment = { body: 'First!...', username: 'icellusedkars' };
+      return request.post('/api/articles/1/comments').send(newComment).expect(201).then((res) => {
+        expect(res.body.comment).to.be.an('object');
+        expect(res.body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body');
+      });
+    });
   });
 });
