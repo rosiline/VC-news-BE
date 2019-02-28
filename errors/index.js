@@ -3,7 +3,11 @@ exports.handleInvalidPath = (req, res) => {
 };
 
 exports.handle400 = (err, req, res, next) => {
-  const sqlErrors = { 42703: 'Missing column / column does not exist' };
+  const sqlErrors = {
+    42703: 'Missing column / column does not exist',
+    23502: 'Failed to add to database, missing data',
+    '22P02': 'Invalid input syntax in url',
+  };
   if (sqlErrors[err.code] || err.status === 400) res.status(400).send({ msg: sqlErrors[err.code] || 'Bad Request' });
   else next(err);
 };
@@ -18,8 +22,11 @@ exports.handle405 = (req, res) => {
 };
 
 exports.handle422 = (err, req, res, next) => {
-  const sqlErrors = { 23505: 'Duplicate value, already exists' };
-  if (sqlErrors[err.code]) res.status(422).send({ msg: sqlErrors[err.code] || 'Unable to process request' });
+  const sqlErrors = {
+    23505: 'Duplicate value, already exists',
+    23503: 'Failed to add to database, topic/username/article does not exist',
+  };
+  if (sqlErrors[err.code] || err.status === 422) res.status(422).send({ msg: sqlErrors[err.code] || 'Unable to process request' });
   else next(err);
 };
 

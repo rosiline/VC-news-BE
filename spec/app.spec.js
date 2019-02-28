@@ -91,7 +91,7 @@ describe('/api', () => {
       expect(res.body.articles[2].created_at).to.equal('2010-11-17T00:00:00.000Z');
     }));
     it('GET responds with status 400 if order query specified in url is not asc or desc', () => request.get('/api/articles?order=invalid_order').expect(400).then(res => expect(res.body.msg).to.equal('Bad Request')));
-    it.only('POST 201 responds with posted article object', () => {
+    it('POST 201 responds with posted article object', () => {
       const newArticle = {
         title: 'Cats or dogs?',
         body: 'Can\'t decide...',
@@ -104,5 +104,28 @@ describe('/api', () => {
         expect(res.body.article).to.contain.keys('title', 'body', 'topic', 'author', 'article_id', 'created_at', 'votes');
       });
     });
+    it('POST responds with status 400 if there is no title, body, topic or username', () => {
+      const newArticle = {
+        title: 'Cats or dogs?',
+        body: 'Can\'t decide...',
+        topic: 'cats',
+      };
+      return request.post('/api/articles').send(newArticle).expect(400).then(res => expect(res.body.msg).to.equal('Failed to add to database, missing data'));
+    });
+    it('POST responds with status 422 for a topic or username that does not exist', () => {
+      const newArticle = {
+        title: 'Cats or dogs?',
+        body: 'Can\'t decide...',
+        topic: 'dogs',
+        username: 'butter_bridge',
+      };
+      return request.post('/api/articles').send(newArticle).expect(422);
+    });
+    it('GET /api/articles/:article_id 200 responds with an article object with properties author, title, article_id, body, topic, created_at, votes, comment_count', () => request.get('/api/articles/1').expect(200).then((res) => {
+      expect(res.body.article).to.be.an('object');
+      expect(res.body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
+    }));
+    it('GET /api/articles/:article_id responds with status 400 for invalid input for article_id', () => request.get('/api/articles/cat').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
+    it('GET /api/articles/:article_id responds with status 404 for a valid input for article_id where article does not exist in the database', () => request.get('/api/articles/100').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
   });
 });
