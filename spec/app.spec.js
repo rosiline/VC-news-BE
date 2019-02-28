@@ -144,5 +144,33 @@ describe('/api', () => {
     it('DELETE status 204 deletes the given article by article_id', () => request.delete('/api/articles/1').expect(204));
     it('DELETE returns 422 when trying to delete an article that does not exist in the database', () => request.delete('/api/articles/100').expect(422).then(res => expect(res.body.msg).to.equal('Unable to process request')));
     it('DELETE returns 400 when article_id is not valid (not a number)', () => request.delete('/api/articles/article1').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
+    it('GET /api/articles/:article_id/comments status 200 responds with an array of comments for the given article_id', () => request.get('/api/articles/1/comments').expect(200).then((res) => {
+      expect(res.body.comments).to.be.an('array');
+      expect(res.body.comments[0]).to.be.an('object');
+      expect(res.body.comments[0]).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body');
+    }));
+    it('GET /api/articles/:article_id/comments status 200 accepts a sort_by query which sorts articles by any valid column', () => request.get('/api/articles/1/comments?sort_by=votes').expect(200).then((res) => {
+      expect(res.body.comments[0].votes).to.equal(100);
+      expect(res.body.comments[1].votes).to.equal(16);
+      expect(res.body.comments[2].votes).to.equal(14);
+    }));
+    it('GET /api/articles/:article_id/comments status 200 sort_by query defaults to date(created_at) if not specified', () => request.get('/api/articles/1/comments').expect(200).then((res) => {
+      expect(res.body.comments[0].created_at).to.equal('2016-11-22T00:00:00.000Z');
+      expect(res.body.comments[1].created_at).to.equal('2015-11-23T00:00:00.000Z');
+      expect(res.body.comments[2].created_at).to.equal('2014-11-23T00:00:00.000Z');
+    }));
+    it('GET /api/articles/:article_id/comments status 200 accepts order query which can be set to asc or desc', () => request.get('/api/articles/1/comments?order=asc').expect(200).then((res) => {
+      expect(res.body.comments[0].created_at).to.equal('2000-11-26T00:00:00.000Z');
+      expect(res.body.comments[1].created_at).to.equal('2005-11-25T00:00:00.000Z');
+      expect(res.body.comments[2].created_at).to.equal('2006-11-25T00:00:00.000Z');
+    }));
+    it('GET /api/articles/:article_id/comments status 200 order query defaults to desc if not specified', () => request.get('/api/articles/1/comments').expect(200).then((res) => {
+      expect(res.body.comments[0].created_at).to.equal('2016-11-22T00:00:00.000Z');
+      expect(res.body.comments[1].created_at).to.equal('2015-11-23T00:00:00.000Z');
+      expect(res.body.comments[2].created_at).to.equal('2014-11-23T00:00:00.000Z');
+    }));
+    // it('POST /api/articles/:article_id/comments status 201 responds with the posted comment object', () => {
+
+    // });
   });
 });

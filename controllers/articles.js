@@ -37,10 +37,7 @@ exports.sendArticle = (req, res, next) => {
   getArticle(article_id)
     .then(([article]) => {
       if (article === undefined) next({ status: 404 });
-      else {
-        console.log(article);
-        res.status(200).send({ article });
-      }
+      else res.status(200).send({ article });
     })
     .catch(next);
 };
