@@ -3,8 +3,8 @@ exports.handleInvalidPath = (req, res) => {
 };
 
 exports.handle400 = (err, req, res, next) => {
-  const sqlErrors = ['42703'];
-  if (sqlErrors.includes(err.code) || err.status === 400) res.status(400).send({ msg: 'Bad Request' });
+  const sqlErrors = { 42703: 'Missing column / column does not exist' };
+  if (sqlErrors[err.code] || err.status === 400) res.status(400).send({ msg: sqlErrors[err.code] || 'Bad Request' });
   else next(err);
 };
 
@@ -18,8 +18,8 @@ exports.handle405 = (req, res) => {
 };
 
 exports.handle422 = (err, req, res, next) => {
-  const sqlErrors = ['23505'];
-  if (sqlErrors.includes(err.code)) res.status(422).send({ msg: 'Unable to process request' });
+  const sqlErrors = { 23505: 'Duplicate value, already exists' };
+  if (sqlErrors[err.code]) res.status(422).send({ msg: sqlErrors[err.code] || 'Unable to process request' });
   else next(err);
 };
 

@@ -27,11 +27,11 @@ describe('/api', () => {
     });
     it('responds with status 422 when unable to process POST request (slug must be unique)', () => {
       const newTopic = { slug: 'cats', description: 'Not dogs' };
-      return request.post('/api/topics').send(newTopic).expect(422).then(res => expect(res.body.msg).to.equal('Unable to process request'));
+      return request.post('/api/topics').send(newTopic).expect(422).then(res => expect(res.body.msg).to.equal('Duplicate value, already exists'));
     });
     it('responds with status 400 for a bad POST request (invalid body)', () => {
       const newTopic = { topic: 'Travel' };
-      return request.post('/api/topics').send(newTopic).expect(400).then(res => expect(res.body.msg).to.equal('Bad Request'));
+      return request.post('/api/topics').send(newTopic).expect(400).then(res => expect(res.body.msg).to.equal('Missing column / column does not exist'));
     });
     it('responds with status 405 for an invalid method on topics', () => request.delete('/api/topics').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method DELETE for this path')));
   });
@@ -79,7 +79,7 @@ describe('/api', () => {
       expect(res.body.articles[1].created_at).to.equal('2014-11-16T00:00:00.000Z');
       expect(res.body.articles[2].created_at).to.equal('2010-11-17T00:00:00.000Z');
     }));
-    it('responds with status 400 if trying to sort by column that doesn\'t exist', () => request.get('/api/articles?sort_by=username').expect(400).then(res => expect(res.body.msg).to.equal('Bad Request')));
+    it('responds with status 400 if trying to sort by column that doesn\'t exist', () => request.get('/api/articles?sort_by=username').expect(400).then(res => expect(res.body.msg).to.equal('Missing column / column does not exist')));
     it('takes an order query which can be set to asc or desc for ascending or descending', () => request.get('/api/articles?order=asc').expect(200).then((res) => {
       expect(res.body.articles[0].created_at).to.equal('1974-11-26T00:00:00.000Z');
       expect(res.body.articles[1].created_at).to.equal('1978-11-25T00:00:00.000Z');
