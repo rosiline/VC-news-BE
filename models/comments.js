@@ -14,3 +14,5 @@ exports.insertCommentByArticle = (article_id, newComment) => {
 };
 
 exports.getUpdatedComment = (comment_id, inc_votes) => connection('comments').where({ comment_id }).increment('votes', inc_votes).returning('*');
+
+exports.delComment = comment_id => connection('comments').where({ comment_id }).del();

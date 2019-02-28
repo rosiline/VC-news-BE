@@ -192,5 +192,6 @@ describe('/api', () => {
         expect(res.body.comment.votes).to.equal(15);
       });
     });
+    it.only('DELETE returns 204 and removes comment from database', () => request.delete('/api/comments/1').expect(204));
   });
 });
