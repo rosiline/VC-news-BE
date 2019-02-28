@@ -12,3 +12,5 @@ exports.insertCommentByArticle = (article_id, newComment) => {
   formattedComment.article_id = article_id;
   return connection.insert(formattedComment).into('comments').where({ article_id }).returning('*');
 };
+
+exports.getUpdatedComment = (comment_id, inc_votes) => connection('comments').where({ comment_id }).increment('votes', inc_votes).returning('*');

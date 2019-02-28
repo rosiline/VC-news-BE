@@ -177,4 +177,20 @@ describe('/api', () => {
       });
     });
   });
+  describe('/comments', () => {
+    it('PATCH /api/comments/:comment_id status 200 increases votes and returns the updated comment object', () => {
+      const votes = { inc_votes: 1 };
+      return request.patch('/api/comments/1').send(votes).expect(200).then((res) => {
+        expect(res.body.comment).to.be.an('object');
+        expect(res.body.comment.votes).to.equal(17);
+      });
+    });
+    it('PATCH / api / comments /: comment_id status 200 decreases votes and returns the updated comment object', () => {
+      const votes = { inc_votes: -1 };
+      return request.patch('/api/comments/1').send(votes).expect(200).then((res) => {
+        expect(res.body.comment).to.be.an('object');
+        expect(res.body.comment.votes).to.equal(15);
+      });
+    });
+  });
 });
