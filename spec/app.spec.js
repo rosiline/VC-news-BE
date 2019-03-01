@@ -10,6 +10,10 @@ describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
   it('responds with 404 when route is not found /bad-url', () => request.get('/bad-url').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
+  it.only('/api returns a json object of all available endpoints on this API', () => request.get('/api').expect(200).then((res) => {
+    expect(res.body).to.be.an('object');
+    expect(res.body).to.contain.keys('GET /api', 'GET /api/topics');
+  }));
   describe('/topics', () => {
     it('GET 200 responds with an array of topic objects with properties slug and description', () => request.get('/api/topics').expect(200)
       .then((res) => {

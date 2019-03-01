@@ -1,0 +1,4 @@
+{
+  "GET /api": "reutrns a json object with a list of all available end points",
+  "GET /api/topics": "returns an array of topic objects"
+}
