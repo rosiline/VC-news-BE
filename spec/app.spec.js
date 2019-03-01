@@ -204,12 +204,16 @@ describe('/api', () => {
       const newUser = {
         username: 'rosiline',
         avatar_url: 'https://pbs.twimg.com/profile_images/602487493859115008/KG5KJLh5_400x400.jpg',
-        name: 'Vik',
+        name: 'vik',
       };
       return request.post('/api/users').send(newUser).expect(201).then((res) => {
         expect(res.body.user).to.be.an('object');
         expect(res.body.user).to.contain.keys('username', 'avatar_url', 'name');
       });
     });
+    it('GET /api/users/:username status 200 responds with a user object with specified username', () => request.get('/api/users/butter_bridge').expect(200).then((res) => {
+      expect(res.body.user).to.be.an('object');
+      expect(res.body.user).to.contain.keys('username', 'avatar_url', 'name');
+    }));
   });
 });
