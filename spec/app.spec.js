@@ -50,12 +50,17 @@ describe('/api', () => {
       expect(res.body.articles[0].author).to.equal('butter_bridge');
       expect(res.body.articles[1].author).to.equal('butter_bridge');
     }));
-    // fix when get users is added
-    // it('GET responds with status 400 if author is not in the database', () => request.get('/api/articles?author=vik').expect(400).then(res => expect(res.body.msg).to.equal('Bad Request')));
-    // come back to test when post users is done as currently there are no usernames without articles
-    // it.only('responds with status 404 if the author exists but doesnt have any articles associated with it', () => {
-    //   return request.get('/api/articles?author=rogersop').expect(404).then(res => expect(res.body.msg).to.equal('Page not found'));
-    // });
+    it('GET responds with status 404 if author is not in the database', () => request.get('/api/articles?author=rosiline').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
+    it('responds with status 200 and empty array if the author exists but doesnt have any articles associated with it', () => {
+      const newUser = {
+        username: 'rosiline',
+        avatar_url: 'https://pbs.twimg.com/profile_images/602487493859115008/KG5KJLh5_400x400.jpg',
+        name: 'vik',
+      };
+      return request.post('/api/users').send(newUser).then(() => request.get('/api/articles?author=rosiline').expect(200).then((res) => {
+        expect(res.body.articles).to.eql([]);
+      }));
+    });
     it('GET takes a topic query which filters the articles by the topic value specified in the query', () => request.get('/api/articles?topic=cats').expect(200).then((res) => {
       expect(res.body.articles[0].topic).to.equal('cats');
     }));

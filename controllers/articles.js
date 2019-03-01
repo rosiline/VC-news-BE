@@ -1,4 +1,5 @@
 const { getTopics } = require('../models/topics');
+const { getUsers } = require('../models/users');
 const {
   getArticles,
   insertArticle,
@@ -7,16 +8,16 @@ const {
   delArticle,
 } = require('../models/articles');
 
-// add get users to promise
 exports.sendArticles = (req, res, next) => {
   const {
     author, topic, sort_by, order,
   } = req.query;
-  Promise.all([getTopics(), getArticles({
+  Promise.all([getTopics(), getUsers(), getArticles({
     author, topic, sort_by, order,
   })])
-    .then(([topics, articles]) => {
+    .then(([topics, users, articles]) => {
       if (topic && !topics.find(el => el.slug === topic)) next({ status: 404 });
+      else if (author && !users.find(el => el.username === author)) next({ status: 404 });
       else if (order && !(order === 'asc' || order === 'desc')) next({ status: 400 });
       else res.status(200).send({ articles });
     })
