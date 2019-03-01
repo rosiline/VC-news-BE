@@ -192,6 +192,14 @@ describe('/api', () => {
         expect(res.body.comment.votes).to.equal(15);
       });
     });
-    it.only('DELETE returns 204 and removes comment from database', () => request.delete('/api/comments/1').expect(204));
+    it('DELETE returns 204 and removes comment from database', () => request.delete('/api/comments/1').expect(204));
+  });
+  describe('/users', () => {
+    it('GET status 200 returns an array of user objects with properties username, avatar_url and name', () => request.get('/api/users').expect(200).then((res) => {
+      expect(res.body.users).to.be.an('array');
+      expect(res.body.users[0]).to.be.an('object');
+      expect(res.body.users[0]).to.contain.keys('username', 'avatar_url', 'name');
+    }));
+
   });
 });
