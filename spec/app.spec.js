@@ -10,7 +10,7 @@ describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
   it('responds with 404 when route is not found /bad-url', () => request.get('/bad-url').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
-  it.only('/api returns a json object of all available endpoints on this API', () => request.get('/api').expect(200).then((res) => {
+  it('/api returns a json object of all available endpoints on this API', () => request.get('/api').expect(200).then((res) => {
     expect(res.body).to.be.an('object');
     expect(res.body).to.contain.keys('GET /api', 'GET /api/topics');
   }));
@@ -149,6 +149,15 @@ describe('/api', () => {
         expect(res.body.article.votes).to.equal(99);
         expect(res.body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
       });
+    });
+    it('PATCH /api/articles/:article_id returns status 400 when there is no inc_votes on request body', () => request.patch('/api/articles/1').expect(400).then(res => expect(res.body.msg).to.equal('Bad Request')));
+    it('PATCH /api/articles/:article_id returns status 400 when inc_votes is not a number', () => {
+      const votes = { inc_votes: 'cat' };
+      return request.patch('/api/articles/1').send(votes).expect(400).then(res => expect(res.body.msg).to.equal('Bad Request'));
+    });
+    xit('PATCH /api/articles/:article_id returns status 422 when there is some other property on the request body apart from inc_votes', () => {
+      const votes = { inc_votes: 5, pets: 'cat' };
+      return request.patch('/api/articles/1').send(votes).expect(422).then(res => expect(res.body.msg).to.equal('err'));
     });
     it('DELETE status 204 deletes the given article by article_id', () => request.delete('/api/articles/1').expect(204));
     it('DELETE returns 422 when trying to delete an article that does not exist in the database', () => request.delete('/api/articles/100').expect(422).then(res => expect(res.body.msg).to.equal('Unable to process request')));

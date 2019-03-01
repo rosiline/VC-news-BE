@@ -46,6 +46,7 @@ exports.sendArticle = (req, res, next) => {
 exports.updateArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
+  if (!inc_votes || typeof inc_votes !== 'number') next({ status: 400 });
   updateVote(article_id, inc_votes)
     .then(() => getArticle(article_id))
     .then(([article]) => {
