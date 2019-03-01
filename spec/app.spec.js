@@ -200,6 +200,16 @@ describe('/api', () => {
       expect(res.body.users[0]).to.be.an('object');
       expect(res.body.users[0]).to.contain.keys('username', 'avatar_url', 'name');
     }));
-
+    it('POST status 201 responds with the posted user object', () => {
+      const newUser = {
+        username: 'rosiline',
+        avatar_url: 'https://pbs.twimg.com/profile_images/602487493859115008/KG5KJLh5_400x400.jpg',
+        name: 'Vik',
+      };
+      return request.post('/api/users').send(newUser).expect(201).then((res) => {
+        expect(res.body.user).to.be.an('object');
+        expect(res.body.user).to.contain.keys('username', 'avatar_url', 'name');
+      });
+    });
   });
 });
