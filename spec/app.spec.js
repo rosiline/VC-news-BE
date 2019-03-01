@@ -168,6 +168,8 @@ describe('/api', () => {
       expect(res.body.comments[0]).to.be.an('object');
       expect(res.body.comments[0]).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body');
     }));
+    it('GET /api/articles/:article_id/comments returns status 400 for invalid input for article_id', () => request.get('/api/articles/cat').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
+    it('GET /api/articles/:article_id/comments returns status 404 for a valid input for article_id when the article does not exist', () => request.get('/api/articles/42/comments').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
     it('GET /api/articles/:article_id/comments status 200 accepts a sort_by query which sorts articles by any valid column', () => request.get('/api/articles/1/comments?sort_by=votes').expect(200).then((res) => {
       expect(res.body.comments[0].votes).to.equal(100);
       expect(res.body.comments[1].votes).to.equal(16);

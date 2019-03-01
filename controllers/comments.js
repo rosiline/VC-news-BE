@@ -1,15 +1,16 @@
 const {
   getCommentsByArticle, insertCommentByArticle, getUpdatedComment, delComment,
 } = require('../models/comments');
+const { getArticle } = require('../models/articles');
 
 exports.sendCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
-  getCommentsByArticle(article_id, { sort_by, order })
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch(next);
+  Promise.all([getArticle(article_id), getCommentsByArticle(article_id, { sort_by, order })])
+    .then(([article, comments]) => {
+      if (article.length === 0) next({ status: 404 });
+      else res.status(200).send({ comments });
+    });
 };
 
 exports.postCommentByArticle = (req, res, next) => {

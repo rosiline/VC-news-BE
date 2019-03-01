@@ -1,5 +1,4 @@
 node_modules
 knexfile.js
 config
-testing.sql
-output.txt
+ignore
