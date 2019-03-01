@@ -149,6 +149,7 @@ describe('/api', () => {
     it('DELETE status 204 deletes the given article by article_id', () => request.delete('/api/articles/1').expect(204));
     it('DELETE returns 422 when trying to delete an article that does not exist in the database', () => request.delete('/api/articles/100').expect(422).then(res => expect(res.body.msg).to.equal('Unable to process request')));
     it('DELETE returns 400 when article_id is not valid (not a number)', () => request.delete('/api/articles/article1').expect(400).then(res => expect(res.body.msg).to.equal('Invalid input syntax in url')));
+    it('/api/articles/:article_id responds with status 405 for an invalid method on the path', () => request.post('/api/articles/20').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method POST for this path')));
     it('GET /api/articles/:article_id/comments status 200 responds with an array of comments for the given article_id', () => request.get('/api/articles/1/comments').expect(200).then((res) => {
       expect(res.body.comments).to.be.an('array');
       expect(res.body.comments[0]).to.be.an('object');
@@ -181,6 +182,7 @@ describe('/api', () => {
         expect(res.body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body');
       });
     });
+    it('/api/articles/:article_id/comments returns status 405 for an invalid method on this path', () => request.delete('/api/articles/1/comments').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method DELETE for this path')));
   });
   describe('/comments', () => {
     it('PATCH /api/comments/:comment_id status 200 increases votes and returns the updated comment object', () => {
@@ -190,7 +192,7 @@ describe('/api', () => {
         expect(res.body.comment.votes).to.equal(17);
       });
     });
-    it('PATCH / api / comments /: comment_id status 200 decreases votes and returns the updated comment object', () => {
+    it('PATCH /api/comments/:comment_id status 200 decreases votes and returns the updated comment object', () => {
       const votes = { inc_votes: -1 };
       return request.patch('/api/comments/1').send(votes).expect(200).then((res) => {
         expect(res.body.comment).to.be.an('object');
@@ -198,6 +200,7 @@ describe('/api', () => {
       });
     });
     it('DELETE returns 204 and removes comment from database', () => request.delete('/api/comments/1').expect(204));
+    it('/api/comments/:comment_id returns status 405 for an invalid method on the path', () => request.get('/api/comments/1').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method GET for this path')));
   });
   describe('/users', () => {
     it('GET status 200 returns an array of user objects with properties username, avatar_url and name', () => request.get('/api/users').expect(200).then((res) => {
@@ -216,9 +219,11 @@ describe('/api', () => {
         expect(res.body.user).to.contain.keys('username', 'avatar_url', 'name');
       });
     });
+    it('/api/users returns status 405 for an invalid method on this path', () => request.delete('/api/users').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method DELETE for this path')));
     it('GET /api/users/:username status 200 responds with a user object with specified username', () => request.get('/api/users/butter_bridge').expect(200).then((res) => {
       expect(res.body.user).to.be.an('object');
       expect(res.body.user).to.contain.keys('username', 'avatar_url', 'name');
     }));
+    it('/api/users/:username returns status 405 for an invalid method on this path', () => request.delete('/api/users/butter_bridge').expect(405).then(res => expect(res.body.msg).to.equal('Unable to use method DELETE for this path')));
   });
 });
