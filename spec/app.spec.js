@@ -68,7 +68,7 @@ describe('/api', () => {
     it('GET takes a topic query which filters the articles by the topic value specified in the query', () => request.get('/api/articles?topic=cats').expect(200).then((res) => {
       expect(res.body.articles[0].topic).to.equal('cats');
     }));
-    it('GET responds with status 404 if topic is not in the database', () => request.get('/api/articles?topic=travel').expect(404).then(res => expect(res.body.msg).to.equal('Page not found')));
+    it('GET responds with an empty array for articles queried with non-existent topic', () => request.get('/api/articles?topic=travel').expect(200).then(res => expect(res.body.articles).to.eql([])));
     it('GET responds with status 200 and empty array if topic exists but does not have any articles associated with it', () => {
       const newTopic = { slug: 'Travel', description: 'Exploring the world' };
       return request

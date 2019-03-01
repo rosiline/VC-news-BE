@@ -3,7 +3,7 @@ exports.up = function (knex, Promise) {
   return knex.schema.createTable('comments', (commentsTable) => {
     commentsTable.increments('comment_id');
     commentsTable.string('author').notNullable();
-    commentsTable.foreign('author').references('username').on('users');
+    commentsTable.foreign('author').references('username').on('users').onDelete('CASCADE');
     commentsTable.integer('article_id').notNullable();
     commentsTable.foreign('article_id').references('article_id').on('articles').onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo(0);

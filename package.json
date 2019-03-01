@@ -4,6 +4,7 @@
   "description": "## Northcoders News API",
   "main": "index.js",
   "scripts": {
+    "start": "node listen.js",
     "test": "mocha ./spec/app.spec.js",
     "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
@@ -13,8 +14,11 @@
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
-    "test-utils": "mocha ./db/utils/index.spec.js",
-    "dev": "nodemon listen.js"
+    "test-utils": "mocha ./db/utils/utils.spec.js",
+    "dev": "nodemon listen.js",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "migrate:latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
+    "migrate:rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
   },
   "repository": {
     "type": "git",

@@ -12,12 +12,12 @@ exports.sendArticles = (req, res, next) => {
   const {
     author, topic, sort_by, order,
   } = req.query;
-  Promise.all([getTopics(), getUsers(), getArticles({
+  Promise.all([getTopics(topic), getUsers(author), getArticles({
     author, topic, sort_by, order,
   })])
     .then(([topics, users, articles]) => {
-      if (topic && !topics.find(el => el.slug === topic)) next({ status: 404 });
-      else if (author && !users.find(el => el.username === author)) next({ status: 404 });
+      // if (topic && topics.length === 0) next({ status: 404 });
+      if (author && users.length === 0) next({ status: 404 });
       else if (order && !(order === 'asc' || order === 'desc')) next({ status: 400 });
       else res.status(200).send({ articles });
     })
@@ -37,7 +37,7 @@ exports.sendArticle = (req, res, next) => {
   const { article_id } = req.params;
   getArticle(article_id)
     .then(([article]) => {
-      if (article === undefined) next({ status: 404 });
+      if (!article) next({ status: 404 });
       else res.status(200).send({ article });
     })
     .catch(next);
@@ -59,7 +59,7 @@ exports.deleteArticle = (req, res, next) => {
   const { article_id } = req.params;
   delArticle(article_id)
     .then((output) => {
-      if (output === 1) res.status(204).send();
+      if (output === 1) res.sendStatus(204);
       else next({ status: 422 });
     })
     .catch(next);
