@@ -32,6 +32,8 @@ exports.getArticle = article_id => connection
   .groupBy('articles.article_id')
   .where({ 'articles.article_id': article_id });
 
+exports.getArticleColumns = () => connection('articles').columnInfo().returning('*');
+
 exports.updateVote = (article_id, inc_votes) => connection('articles').where({ article_id }).increment('votes', inc_votes).returning('*');
 
 exports.delArticle = article_id => connection('articles').where({ article_id }).del();

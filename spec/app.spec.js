@@ -88,7 +88,11 @@ describe('/api', () => {
       expect(res.body.articles[1].created_at).to.equal('2014-11-16T00:00:00.000Z');
       expect(res.body.articles[2].created_at).to.equal('2010-11-17T00:00:00.000Z');
     }));
-    it('GET responds with status 400 if trying to sort by column that doesn\'t exist', () => request.get('/api/articles?sort_by=username').expect(400).then(res => expect(res.body.msg).to.equal('Missing column / column does not exist')));
+    it.only('GET will ignore query if trying to sort by column that doesn\'t exist', () => request.get('/api/articles?sort_by=username').expect(200).then((res) => {
+      expect(res.body.articles[0].created_at).to.equal('2018-11-15T00:00:00.000Z');
+      expect(res.body.articles[1].created_at).to.equal('2014-11-16T00:00:00.000Z');
+      expect(res.body.articles[2].created_at).to.equal('2010-11-17T00:00:00.000Z');
+    }));
     it('GET takes an order query which can be set to asc or desc for ascending or descending', () => request.get('/api/articles?order=asc').expect(200).then((res) => {
       expect(res.body.articles[0].created_at).to.equal('1974-11-26T00:00:00.000Z');
       expect(res.body.articles[1].created_at).to.equal('1978-11-25T00:00:00.000Z');

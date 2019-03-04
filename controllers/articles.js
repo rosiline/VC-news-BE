@@ -1,7 +1,7 @@
-const { getTopics } = require('../models/topics');
 const { getUsers } = require('../models/users');
 const {
   getArticles,
+  getArticleColumns,
   insertArticle,
   getArticle,
   updateVote,
@@ -10,19 +10,25 @@ const {
 
 exports.sendArticles = (req, res, next) => {
   const {
-    author, topic, sort_by, order,
+    author, topic, order,
   } = req.query;
-  Promise.all([getTopics(topic), getUsers(author), getArticles({
-    author, topic, sort_by, order,
-  })])
-    .then(([topics, users, articles]) => {
-      // if (topic && topics.length === 0) next({ status: 404 });
+  let { sort_by } = req.query;
+  getArticleColumns()
+    .then((columns) => {
+      if (!Object.keys(columns).includes(sort_by)) sort_by = 'created_at';
+      return sort_by;
+    })
+    .then(() => Promise.all([getUsers(author), getArticles({
+      author, topic, sort_by, order,
+    })]))
+    .then(([users, articles]) => {
       if (author && users.length === 0) next({ status: 404 });
       else if (order && !(order === 'asc' || order === 'desc')) next({ status: 400 });
       else res.status(200).send({ articles });
     })
     .catch(next);
 };
+
 
 exports.postArticle = (req, res, next) => {
   const newArticle = req.body;
