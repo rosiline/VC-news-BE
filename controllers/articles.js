@@ -10,7 +10,7 @@ const {
 
 exports.sendArticles = (req, res, next) => {
   const {
-    author, topic, order,
+    author, topic, order, limit, p,
   } = req.query;
   let { sort_by } = req.query;
   getArticleColumns()
@@ -19,7 +19,7 @@ exports.sendArticles = (req, res, next) => {
       return sort_by;
     })
     .then(() => Promise.all([getUsers(author), getArticles({
-      author, topic, sort_by, order,
+      author, topic, sort_by, order, limit, p,
     })]))
     .then(([users, articles]) => {
       if (author && users.length === 0) next({ status: 404 });
@@ -51,12 +51,14 @@ exports.sendArticle = (req, res, next) => {
 
 exports.updateArticle = (req, res, next) => {
   const { article_id } = req.params;
-  const { inc_votes } = req.body;
-  if (!inc_votes || typeof inc_votes !== 'number') next({ status: 400 });
+  let { inc_votes } = req.body;
+  if (!inc_votes) inc_votes = 0;
+  if (typeof inc_votes !== 'number') next({ status: 400 });
   updateVote(article_id, inc_votes)
     .then(() => getArticle(article_id))
     .then(([article]) => {
-      res.status(200).send({ article });
+      if (!article) next({ status: 404 });
+      else res.status(200).send({ article });
     })
     .catch(next);
 };
@@ -66,7 +68,7 @@ exports.deleteArticle = (req, res, next) => {
   delArticle(article_id)
     .then((output) => {
       if (output === 1) res.sendStatus(204);
-      else next({ status: 422 });
+      else next({ status: 404 });
     })
     .catch(next);
 };
