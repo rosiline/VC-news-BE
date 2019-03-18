@@ -1,6 +1,7 @@
 const { getUsers } = require('../models/users');
 const {
   getArticles,
+  getArticleCount,
   getArticleColumns,
   insertArticle,
   getArticle,
@@ -10,7 +11,11 @@ const {
 
 exports.sendArticles = (req, res, next) => {
   const {
-    author, topic, order, limit, p,
+    author,
+    topic,
+    order,
+    limit,
+    p,
   } = req.query;
   let { sort_by } = req.query;
   getArticleColumns()
@@ -18,13 +23,13 @@ exports.sendArticles = (req, res, next) => {
       if (!Object.keys(columns).includes(sort_by)) sort_by = 'created_at';
       return sort_by;
     })
-    .then(() => Promise.all([getUsers(author), getArticles({
+    .then(() => Promise.all([getUsers(author), getArticleCount({ author, topic }), getArticles({
       author, topic, sort_by, order, limit, p,
     })]))
-    .then(([users, articles]) => {
+    .then(([users, [{ total_count }], articles]) => {
       if (author && users.length === 0) next({ status: 404 });
       else if (order && !(order === 'asc' || order === 'desc')) next({ status: 400 });
-      else res.status(200).send({ articles });
+      else res.status(200).send({ total_count: +total_count, articles });
     })
     .catch(next);
 };

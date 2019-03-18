@@ -49,6 +49,14 @@ describe('/api', () => {
       expect(res.body.articles[0]).to.contain.keys('comment_count');
       expect(res.body.articles[0].comment_count).to.be.a('string');
     }));
+    it('GET 200 should have a total_count parameter which shows the total number of articles', () => request.get('/api/articles').expect(200).then((res) => {
+      expect(res.body).to.contain.keys('total_count');
+      expect(res.body.total_count).to.be.a('number');
+    }));
+    it('GET 200 total_count should take filters into account but ignore limits and paging', () => request.get('/api/articles?topic=mitch').expect(200).then((res) => {
+      expect(res.body.total_count).to.equal(11);
+      expect(res.body.articles).to.have.length(10);
+    }));
     it('GET 200 takes an author query which filters the articles by the username value specified in the query', () => request.get('/api/articles?author=butter_bridge').expect(200).then((res) => {
       expect(res.body.articles[0].author).to.equal('butter_bridge');
       expect(res.body.articles[1].author).to.equal('butter_bridge');

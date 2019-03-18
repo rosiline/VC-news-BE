@@ -19,6 +19,16 @@ exports.getArticles = ({
   return articles.where(queries);
 };
 
+exports.getArticleCount = ({ author, topic }) => {
+  const queries = {};
+  if (author) queries.author = author;
+  if (topic) queries.topic = topic;
+  return connection('articles')
+    .where(queries)
+    .count({ total_count: 'article_id' })
+    .returning('total_count');
+};
+
 exports.insertArticle = (newArticle) => {
   const [formattedArticle] = renameKey([newArticle], 'username', 'author');
   return connection('articles')
