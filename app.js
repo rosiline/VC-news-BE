@@ -1,5 +1,6 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const apiRouter = require('./routers/apiRouter');
 const {
   handleInvalidPath,
@@ -9,6 +10,7 @@ const {
   handle500,
 } = require('./errors/index');
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use('/api', apiRouter);
 

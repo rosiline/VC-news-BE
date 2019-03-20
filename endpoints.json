@@ -1,4 +1,33 @@
 {
   "GET /api": "reutrns a json object with a list of all available end points",
-  "GET /api/topics": "returns an array of topic objects"
+  "GET /api/users": "returns an array if user objects",
+  "POST /api/users": "used to add a new user, body needs to contain an object with username, avatar_url (can be blank) and name. If successful responds with posted user object",
+  "GET /api/users/:username": "returns a user objebt for the username specified in the url",
+  "GET /api/topics": "returns an array of topic objects",
+  "POST /api/topics": "used to post a new topic to the database, body needs to contain an object with slug, description. If post successful will return the posted topic",
+  "GET /api/articles": {
+    "returns an array of article objects. Accepts the following queries": {
+      "author": "filters articles by username",
+      "topic": "filters articles by topic",
+      "sort_by": "sorts articles by a valid column(defaults to date)",
+      "order": "ascending or descending (defaults to descending)",
+      "limit": "limits the number of results returned (defaults to 10)",
+      "p": "specifies which page to start on (defaults to first page)"
+    }
+  },
+  "POST /api/articles": "used to post a new articles, body needs to contain an object with title, body, topic and username. If post successful will return the posted article",
+  "GET /api/articles/:article_id": "returns a single article object with the article id specified in the url",
+  "PATCH /api/articles/:article_id": "updates the votes on the specified article, body needs to contain an object with inc_votes which can be positive or negative to be added to existing votes. Responds with the updated article",
+  "DELETE /api/articles/:article_id": "deletes the article with given article id. Responds with 204 status if successful",
+  "GET /api/articles/:article_id/comments": {
+    "returns an array of comments for the article id given in the url. Accepts the following queries": {
+      "sort_by": "sorts comments by a valid column (defaults to date)",
+      "order": "ascending or descending (defaults to descending)",
+      "limit": "limits the number of results returned (defaults to 10)",
+      "p": "specifies which page to start on (defaults to first page)"
+    }
+  },
+  "POST /api/articles/:article_id/comments": "used to post a new comment to the given article id, body needs to contain an object with username and body(the comment). Responds with the posted comment if successful",
+  "PATCH /api/comments/:comment_id": "updates the votes on the specified comment, body needs to contain an object with inc_votes which can be positive or negative to be added to existing votes. Responds with the updated comment",
+  "DELETE /api/comments/:comment_id": "deletes the comment with given comment id. Responds with 204 status if successful"
 }
