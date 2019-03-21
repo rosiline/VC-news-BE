@@ -47,7 +47,7 @@ describe('/api', () => {
     }));
     it('GET 200 should have a comment count parameter which is the total count of all the comments with this article_id', () => request.get('/api/articles').expect(200).then((res) => {
       expect(res.body.articles[0]).to.contain.keys('comment_count');
-      expect(res.body.articles[0].comment_count).to.be.a('number');
+      expect(res.body.articles[0].comment_count).to.be.a('string');
     }));
     it('GET 200 should have a total_count parameter which shows the total number of articles', () => request.get('/api/articles').expect(200).then((res) => {
       expect(res.body).to.contain.keys('total_count');

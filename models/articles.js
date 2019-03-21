@@ -16,10 +16,7 @@ exports.getArticles = ({
   const queries = {};
   if (author) queries['articles.author'] = author;
   if (topic) queries.topic = topic;
-  return articles.where(queries).map((article) => {
-    article.comment_count = +article.comment_count;
-    return article;
-  });
+  return articles.where(queries);
 };
 
 exports.getArticleCount = ({ author, topic }) => {

@@ -20,7 +20,7 @@ exports.sendArticles = (req, res, next) => {
   let { sort_by } = req.query;
   getArticleColumns()
     .then((columns) => {
-      if (!Object.keys(columns).includes(sort_by)) sort_by = 'created_at';
+      if (!Object.keys(columns).includes(sort_by) && sort_by !== 'comment_count') sort_by = 'created_at';
       return sort_by;
     })
     .then(() => Promise.all([getUsers(author), getArticleCount({ author, topic }), getArticles({
