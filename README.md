@@ -1,347 +1,126 @@
-# BE2-NC-Knews
+# VC-Knews API
 
-## Northcoders News API
+This project was built while studying at Northcoders to practice and test my skills in Node.js, PostgreSQL and building RESTful APIs.
 
-### Background
+Hosted on Heroku: https://nc-knews-vik.herokuapp.com/api
 
-We will be building the API to use in the Northcoders News Sprint during the Front End block of the course.
+For readability recommended to view with a JSON Viewer extension.
 
-Our database will be PSQL, and you will interact with it using [Knex](https://knexjs.org).
+## Prerequisites
 
-#### NOTE 1:
+You will require Node.js for this project.
 
-For this sprint ensure you have the eslint extension installed in VS-Code as it will help to enforce best practices when you are writing your code.
+## Installing
 
-#### NOTE 2:
+1. Fork your own copy of this repository
+2. Navigate to the folder where you want to store it though the terminal and paste the following command in the terminal:
+```
+git clone <GitHub repo link>
+```
+3. cd into the repository
+4. Run the following command in your terminal to install all the node modules required
+```
+npm install
+```
+This will install the following dependencies:
+```
+body-parser: ^1.18.3,
+cors: ^2.8.5,
+express: ^4.16.4,
+knex: ^0.15.2,
+pg: ^7.6.1
+```
+And the following developer dependencies:
+```
+chai: ^4.2.0,
+eslint: ^5.14.1,
+eslint-config-airbnb: ^17.1.0,
+eslint-plugin-import: ^2.14.0,
+husky: ^1.1.4,
+mocha: ^6.0.2,
+nodemon: ^1.18.10,
+supertest: ^3.4.2
+```
+## Database setup
 
-Read this README.md carefully! :)
+1. You will need to create a config file called knexfile.js and may want to git ignore it if you include any log in details. The config file should look like this:
+```
+const { DB_URL } = process.env;
+const ENV = process.env.NODE_ENV || 'development';
 
-### Step 1 - Seeding
+const baseConfig = {
+  client: 'pg',
+  seeds: {
+    directory: './db/seed',
+  },
+  migrations: {
+    directory: './db/migrations',
+  },
+};
 
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in.
+const dbConfig = {
+  development: {
+    connection: {
+      database: 'nc_knews',
+      username: 'username',
+      password: 'password',
+    },
+  },
+  test: {
+    connection: {
+      database: 'nc_knews_test',
+      username: 'username',
+      password: 'password',
+    },
+  },
+  production: {
+    connection: `${DB_URL}?ssl=true`,
+  },
+};
 
-1. You should have separate tables for topics, articles, users and comments, and you will need to think carefully about the order in which you seed your data.
+module.exports = { ...baseConfig, ...dbConfig[ENV] };
 
-- Each topic should have:
+```
+Note: PostgreSQL username and password is only required for linux users
 
-  * `slug` field which is a unique string that acts as the table's primary key
-  * `description` field which is a string giving a brief description of a given topic
-
-- Each user should have:
-
-  * `username` which is the primary key & unique
-  * `avatar_url`
-  * `name`
-
-- Each article should have:
-  * `article_id` which is the primary key
-  * `title`
-  * `body`
-  * `votes` defaults to 0
-  * `topic` field which references the slug in the topics table
-  * `author` field that references a user's primary key (username)
-  * `created_at` defaults to the current date
-
-* Each comment should have:
-  * `comment_id` which is the primary key
-  * `author` field that references a user's primary key (username)
-  * `article_id` field that references an article's primary key
-  * `votes` defaults to 0
-  * `created_at` defaults to the current date
-  * `body`
-
-- **NOTE:** psql expects Date types to be in a date format - not a timestamp! However, you can easily turn a timestamp into a date using JS...
-
-***
-
-### Step 2 - Building and Testing
-
-1.  Build your Express app
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes.
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route **as you go**, checking both successful requests and the variety of errors you could expect to encounter.
-
-**HINT** You will need to take advantage of knex migrations in order to efficiently test your application.
-
-***
-
-#### Routes
-
-Your server should have the following end-points:
-
-```http
-GET /api/topics
-POST /api/topics
-
-GET /api/articles
-POST /api/articles
-
-GET /api/articles/:article_id
-PATCH /api/articles/:article_id
-DELETE /api/articles/:article_id
-
-GET /api/articles/:article_id/comments
-POST /api/articles/:article_id/comments
-
-PATCH /api/comments/:comment_id
-DELETE /api/comments/:comment_id
-
-GET /api/users
-POST /api/users
-
-GET /api/users/:username
-
-GET /api
+2. To set up and seed the database you can use these pre written scripts:
+```
+npm run setup-dbs
+npm run migrate-latest
+npm run migrate-rollback
+npm run seed
 ```
 
-***
+## Testing
 
-#### Route Requirements
-
-These have been split into **must haves** and some slightly more advanced _nice to have / if time_. The _if time_ tasks should be **left until you have tested and implemented all other functionality**.
-
-***
-
-```http
-GET /api/topics
+There are two test files in this project:
+1. app.spec.js located in the spec folder, tests all the api endpoints to make sure they are working as desired, including error handling. Tests can be run by using
 ```
-
-##### Responds with
-- an array of topic objects, each of which should have the following properties:
-  * `slug`
-  * `description`
-
-***
-
-```http
-POST /api/topics
+npm run test
 ```
-
-##### Request body accepts
-- an object containing the following properties:
-  * `slug` which must be unique
-  * `description`
-
-##### Responds with
-- the posted topic object
-
-***
-
-```http
-GET /api/articles
+2. utils.spec.js located in the db/utils folder which tests the utility functions that were used to manipulate data when seeding the database. These can be tested by running
 ```
-
-##### Responds with
-- an `articles` array of article objects, each of which should have the following properties:
-  * `author` which is the `username` from the users table
-  * `title`
-  * `article_id`
-  * `topic`
-  * `created_at`
-  * `votes`
-  * `comment_count` which is the total count of all the comments with this article_id - you should make use of knex queries in order to achieve this
-
-##### Should accept queries
-  * `author`, which filters the articles by the username value specified in the query
-  * `topic`, which filters the articles by the topic value specified in the query
-  * `sort_by`, which sorts the articles by any valid column (defaults to date)
-  * `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-
-##### If time (the following will make pagination easier when you get to building your front-end application)
-- accept the following queries:
-  * `limit`, which limits the number of responses (defaults to 10)
-  * `p`, stands for page which specifies the page at which to start (calculated using limit)
-- add a `total_count` property, displaying the total number of articles (this should display the total number of articles with any filters applied, discounting the limit)
-
-***
-
-```http
-POST /api/articles
+npm run test-utils
 ```
+## Routes
+For all available endpoints view the endpoints.json file or access it on /api route as linked at the top of this page
 
-##### Request body accepts
-- an object containing the following properties:
-  * `title`
-  * `body`
-  * `topic`
-  * `username`
+## Deployment
 
-##### Responds with
-- the posted article
+If you wish to have your own live version of the API you can deploy it on Heroku, instructions how to do so can be found here https://devcenter.heroku.com/articles/git
 
-***
+## Useful docs
 
-```http
-GET /api/articles/:article_id
-```
+* Node.js - https://nodejs.org/en/docs/
+* Express - https://expressjs.com/
+* Knex - https://knexjs.org/
+* PostgreSQL - https://node-postgres.com/
+* Heroku - https://devcenter.heroku.com/articles/getting-started-with-nodejs
 
-##### Responds with
-- an article object,  which should have the following properties:
-  * `author` which is the `username` from the users table
-  * `title`
-  * `article_id`
-  * `body`
-  * `topic`
-  * `created_at`
-  * `votes`
-  * `comment_count` which is the total count of all the comments with this article_id - you should make use of knex queries in order to achieve this
+## Author
 
-***
+Viktorija Cumacenko
 
-```http
-PATCH /api/articles/:article_id
-```
+## Acknowledgements
 
-##### Request body accepts
-- an object in the form `{ inc_votes: newVote }`
-
-  * `newVote` will indicate how much the `votes` property in the database should be updated by
-
-  e.g.
-
-  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-
-  `{ inc_votes : -100 }` would decrement the current article's vote property by 100
-
-##### Responds with
-- the updated article
-
-***
-
-```http
-DELETE /api/articles/:article_id
-```
-##### Should
-- delete the given article by `article_id`
-
-##### Responds with
-- status 204 and no content
-
-***
-
-```http
-GET /api/articles/:article_id/comments
-```
-
-##### Responds with
-- an array of comments for the given `article_id` of which each comment should have the following properties:
-  * `comment_id`
-  * `votes`
-  * `created_at`
-  * `author` which is the `username` from the users table
-  * `body`
-
-##### Accepts queries
-  * `sort_by`, which sorts the articles by any valid column (defaults to date)
-  * `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-
-##### If time  (the following will make pagination easier when you get to building your front-end application)
-- accept the following queries:
-  * `limit`, which limits the number of responses (defaults to 10)
-  * `p`, stands for page which specifies the page at which to start (calculated using limit)
-
-***
-
-```http
-POST /api/articles/:article_id/comments
-```
-
-##### Request body accepts
-- an object with the following properties:
-  * `username`
-  * `body`
-
-##### Responds with
-- the posted comment
-
-***
-
-```http
-PATCH /api/comments/:comment_id
-```
-##### Request body accepts
-- an object in the form `{ inc_votes: newVote }`
-
-  * `newVote` will indicate how much the `votes` property in the database should be updated by
-
-  e.g.
-
-  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-
-  `{ inc_votes : -1 }` would decrement the current article's vote property by 1
-
-##### Responds with
-- the updated comment
-
-***
-
-```http
-DELETE /api/comments/:comment_id
-```
-
-##### Should
-- delete the given comment by `comment_id`
-
-##### Responds with
-- status 204 and no content
-
-***
-
-```http
-GET /api/users
-```
-
-##### Responds with
-- an array of user objects, each of which should have the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-***
-
-```http
-POST /api/users
-```
-
-##### Request body accepts
-- an object containing the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-##### Responds with
-- the posted user
-
-***
-
-```http
-GET /api/users/:username
-```
-
-##### Responds with
-- a user object which should have the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-***
-
-```http
-GET /api
-```
-##### Responds with
-- JSON describing all the available endpoints on your API
-
-***
-
-### Step 3 - Hosting
-
-Make sure your application and your database is hosted using heroku
-
-### Step 4 - Preparing for your review and portfolio
-
-Finally, you should write a README for this project (and remove this one). The README should be broken down like this: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-
-It should also include the link where your heroku app is hosted.
+Northcoders
