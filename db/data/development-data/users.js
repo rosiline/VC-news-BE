@@ -2,12 +2,12 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url: 'https://www.spiritsurfers.net/monastery/wp-content/uploads/_41500270_mrtickle.jpg',
+    avatar_url: 'https://gravatar.com/avatar/a1d90cd4310bd7e4d94c07f5a58f4fb6?s=400&d=robohash&r=x',
   },
   {
     username: 'grumpy19',
     name: 'Paul Grump',
-    avatar_url: 'https://www.tumbit.com/profile-image/4/original/mr-grumpy.jpg',
+    avatar_url: 'https://robohash.org/c004ba40887d12535d87ab86ccc0abc8?set=set4&bgset=&size=400x400',
   },
   {
     username: 'happyamy2016',
@@ -17,12 +17,12 @@ module.exports = [
   {
     username: 'cooljmessy',
     name: 'Peter Messy',
-    avatar_url: 'https://i.imgur.com/WfX0Neu.jpg',
+    avatar_url: 'http://tinygraphs.com/labs/isogrids/hexa16/tinygraphs?theme=summerwarmth&numcolors=4&size=220&fmt=svg',
   },
   {
     username: 'weegembump',
     name: 'Gemma Bump',
-    avatar_url: 'https://www.upandrunning.co.uk/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/m/r/mr-bump.jpg',
+    avatar_url: 'http://tinygraphs.com/isogrids/tinygraphs?theme=daisygarden&numcolors=2&size=220&fmt=svg',
   },
   {
     username: 'jessjelly',
